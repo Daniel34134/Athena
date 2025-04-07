@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos Translator</title>
+    <link rel="stylesheet" href="public/globals.css"> <!-- 引入样式 -->
+    <link rel="stylesheet" href="path/to/tailwind.css"> <!-- 适配Tailwind CSS -->
+    <style>
+        body {
+            background: url('public/images/parchment-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #C68A27;
+        }
+
+        button {
+            background-color: #3C6C3B;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2E5C2E;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Chronos Translator</h1>
+            <button onclick="location.href='/upload-success'">上传文件</button>
+        </header>
+        <main>
+            <div>
+                <h2>上传您的文档</h2>
