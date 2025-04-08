@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖像生成器 | Tech AI</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <style>
+        :root {
+            --primary: #00c2ff;
+            --secondary: #7928ca;
+            --dark: #121212;
+            --light: #f5f5f7;
+            --success: #00f2c3;
+            --warning: #ff8d00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            background: rgba(0, 194, 255, 0.1);
+        }
+
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 600px;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-section, .result-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary);
+        }
+
+        .upload-area {
+            flex: 1;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(0, 194, 255, 0.05);
+        }
+
+        .upload-area svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .upload-area input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+        .result-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            flex: 1;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .placeholder-result {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .placeholder-result svg {
+            width: 64px;
+            height: 64px;
+            fill: rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 194, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .options-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .options-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .option-group {
+            margin-bottom: 20px;
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .option-group select, .option-group input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+        }
+
+        .option-group select:focus, .option-group input[type="range"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .range-value {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tech-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .tech-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            filter: blur(80px);
+        }
+
+        .tech-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+        }
+
+        .tech-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -200px;
+            right: -200px;
+            background: linear-gradient(to right, var(--secondary), var(--success));
+        }
+
+        .tech-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .gallery-item {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            background: var(--success);
+            color: var(--dark);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 242, 195, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="tech-bg">
+        <div class="tech-circle"></div>
+        <div class="tech-circle"></div>
+        <div class="tech-grid"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+                AI圖像生成器
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">首頁</a></li>
+                    <li><a href="#">畫廊</a></li>
+                    <li><a href="#">教學</a></li>
+                    <li><a href="#">關於</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>AI智能圖像生成技術</h1>
+            <p>上傳您的圖片，讓我們的AI技術將其轉換成令人驚嘆的新作品。探索無限可能，釋放您的創意潛能。</p>
+        </section>
+
+        <div class="main-content">
+            <div class="upload-section">
+                <h2 class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"/>
+                    </svg>
+                    上傳圖片
+                </h2>
+                <div class="upload-area" id="uploadArea">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                    </svg>
+                    <p>點擊或拖放圖片到此處</p>
+                    <input type="file" id="fileInput" accept="image/*">
+                </div>
+                <img id="previewImage" class="preview-image">
+                <div class="loading-overlay" id="uploadLoading">
+                    <div class="loading-spinner"></div>
+                    <p>上傳中...</p>
+                </div>
+            </div>
+
+            <div class="result-section">
+                <h2 class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm1-17.93c3.94.49 7 3.85 7 7.93s-3.05 7.44-7 7.93V4.07z"/>
+                    </svg>
+                    生成結果
+                </h2>
+                <div class="placeholder-result" id="placeholderResult">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                    </svg>
+                    <p>您的生成圖像將顯示在這裡</p>
+                </div>
+                <img id="resultImage" class="result-image">
+                <div class="loading-overlay" id="generationLoading">
+                    <div class="loading-spinner"></div>
+                    <p>AI正在生成圖像...</p>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" id="generateBtn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L11 13.17l7.59-7.59L20 7l-8 8z"/>
+                        </svg>
+                        生成圖像
+                    </button>
+                    <button class="btn btn-secondary" id="downloadBtn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        下載
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="options-panel">
+            <h2 class="options-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+                </svg>
+                生成選項
+            </h2>
+            <div class="options-grid">
+                <div class="option-group">
+                    <label for="styleSelect">風格選擇</label>
+                    <select id="styleSelect">
+                        <option value="realistic">寫實風格</option>
+                        <option value="anime">動漫風格</option>
+                        <option value="sketch">素描風格</option>
+                        <option value="oil">油畫風格</option>
+                        <option value="watercolor">水彩風格</option>
+                        <option value="cyberpunk">賽博朋克</option>
+                        <option value="futuristic">未來科技</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label for="intensityRange">效果強度</label>
+                    <input type="range" id="intensityRange" min="0" max="100" value="50">
+                    <div class="range-value">
+                        <span>弱</span>
+                        <span id="intensityValue">50%</span>
+                        <span>強</span>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <label for="colorToneSelect">色調</label>
+                    <select id="colorToneSelect">
+                        <option value="original">原始色調</option>
+                        <option value="warm">暖色調</option>
+                        <option value="cool">冷色調</option>
+                        <option value="bw">黑白</option>
+                        <option value="sepia">復古</option>
+                        <option value="neon">霓虹</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label for="detailRange">細節程度</label>
+                    <input type="range" id="detailRange" min="0" max="100" value="75">
+                    <div class="range-value">
+                        <span>低</span>
+                        <span id="detailValue">75%</span>
+                        <span>高</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 60px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+            </svg>
+            作品展示
+        </h2>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="https://source.unsplash.com/random/300x300?tech,ai,1" alt="AI生成圖像">
+                <div class="gallery-item-overlay">
+                    <p>賽博朋克風格</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://source.unsplash.com/random/300x300?tech,ai,2" alt="AI生成圖像">
+                <div class="gallery-item-overlay">
+                    <p>未來科技風格</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://source.unsplash.com/random/300x300?tech,ai,3" alt="AI生成圖像">
+                <div class="gallery-item-overlay">
+                    <p>霓虹風格</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://source.unsplash.com/random/300x300?tech,ai,4" alt="AI生成圖像">
+                <div class="gallery-item-overlay">
+                    <p>寫實風格</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 AI圖像生成器 | 科技感十足的圖像處理工具</p>
+        </footer>
+    </div>
+
+    <div class="notification" id="notification">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        <span id="notificationText">操作成功！</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewImage = document.getElementById('previewImage');
+        const resultImage = document.getElementById('resultImage');
+        const placeholderResult = document.getElementById('placeholderResult');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const uploadLoading = document.getElementById('uploadLoading');
+        const generationLoading = document.getElementById('generationLoading');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const intensityRange = document.getElementById('intensityRange');
+        const intensityValue = document.getElementById('intensityValue');
+        const detailRange = document.getElementById('detailRange');
+        const detailValue = document.getElementById('detailValue');
+
+        // Event Listeners
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileUpload);
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('drop', handleDrop);
+        generateBtn.addEventListener('click', generateImage);
+        downloadBtn.addEventListener('click', downloadImage);
+        intensityRange.addEventListener('input', updateIntensityValue);
+        detailRange.addEventListener('input', updateDetailValue);
+
+        // Functions
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadLoading.style.display = 'flex';
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    generateBtn.disabled = false;
+                    
+                    setTimeout(() => {
+                        uploadLoading.style.display = 'none';
+                        showNotification('圖片上傳成功！');
+                    }, 1000);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+            uploadArea.style.background = 'rgba(0, 194, 255, 0.05)';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            uploadArea.style.background = 'transparent';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileUpload({target: {files: [file]}});
+            }
+        }
+
+        function generateImage() {
+            generationLoading.style.display = 'flex';
+            placeholderResult.style.display = 'none';
+            
+            // Simulate AI processing time
+            setTimeout(() => {
+                // In a real app, this would be where you'd call your AI service
+                // For demo purposes, we're just displaying the uploaded image with a filter
+                const style = document.getElementById('styleSelect').value;
+                const colorTone = document.getElementById('colorToneSelect').value;
+                
+                resultImage.src = previewImage.src;
+                resultImage.style.display = 'block';
+                
+                // Apply CSS filters based on selected options
+                let filterString = '';
+                
+                switch(style) {
+                    case 'sketch':
+                        filterString += 'grayscale(100%) contrast(120%) ';
+                        break;
+                    case 'oil':
+                        filterString += 'saturate(150%) contrast(110%) ';
+                        break;
+                    case 'watercolor':
+                        filterString += 'brightness(110%) contrast(90%) saturate(85%) ';
+                        break;
+                    case 'cyberpunk':
+                        filterString += 'hue-rotate(270deg) saturate(200%) contrast(140%) ';
+                        break;
+                    case 'futuristic':
+                        filterString += 'brightness(120%) contrast(110%) saturate(130%) ';
+                        break;
+                }
+                
+                switch(colorTone) {
+                    case 'warm':
+                        filterString += 'sepia(30%) saturate(150%) hue-rotate(330deg) ';
+                        break;
+                    case 'cool':
+                        filterString += 'sepia(20%) saturate(120%) hue-rotate(180deg) ';
+                        break;
+                    case 'bw':
+                        filterString += 'grayscale(100%) ';
+                        break;
+                    case 'sepia':
+                        filterString += 'sepia(80%) ';
+                        break;
+                    case 'neon':
+                        filterString += 'brightness(120%) contrast(120%) saturate(200%) hue-rotate(310deg) ';
+                        break;
+                }
+                
+                // Apply intensity and detail values
+                const intensity = intensityRange.value / 100;
+                const detail = detailRange.value / 100;
+                
+                filterString += `contrast(${100 + detail * 50}%) `;
+                
+                // Apply the filter with intensity
+                if (intensity < 1) {
+                    // Create a canvas to blend the original and filtered image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.src = previewImage.src;
+                    
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        // Draw original image
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // Apply filter at full strength
+                        resultImage.style.filter = filterString;
+                        
+                        // Complete the generation process
+                        generationLoading.style.display = 'none';
+                        downloadBtn.disabled = false;
+                        showNotification('圖像生成成功！');
+                    };
+                } else {
+                    resultImage.style.filter = filterString;
+                    
+                    // Complete the generation process
+                    generationLoading.style.display = 'none';
+                    downloadBtn.disabled = false;
+                    showNotification('圖像生成成功！');
+                }
+            }, 2000);
+        }
+
+        function downloadImage() {
+            // Create a canvas to capture the filtered image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = resultImage.src;
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Apply the same filters to the canvas
+                ctx.filter = resultImage.style.filter;
+                ctx.drawImage(img, 0, 0);
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.download = 'ai-generated-image.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                showNotification('圖像已下載！');
+            };
+        }
+
+        function updateIntensityValue() {
+            intensityValue.textContent = `${intensityRange.value}%`;
+        }
+
+        function updateDetailValue() {
+            detailValue.textContent = `${detailRange.value}%`;
+        }
+
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize range values
+        updateIntensityValue();
+        updateDetailValue();
+    </script>
+</body>
+</html>
