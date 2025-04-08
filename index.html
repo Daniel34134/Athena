@@ -1,51 +1,77 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chronos Translator</title>
-    <link rel="stylesheet" href="public/globals.css"> <!-- 引入样式 -->
-    <link rel="stylesheet" href="path/to/tailwind.css"> <!-- 适配Tailwind CSS -->
-    <style>
-        body {
-            background: url('public/images/parchment-bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: sans-serif;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #C68A27;
-        }
-
-        button {
-            background-color: #3C6C3B;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #2E5C2E;
-        }
-    </style>
+    <link rel="stylesheet" href="path/to/your/styles.css"> <!-- Add your CSS file -->
+    <title>Upload Success</title>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Chronos Translator</h1>
-            <button onclick="location.href='/upload-success'">上传文件</button>
-        </header>
-        <main>
-            <div>
-                <h2>上传您的文档</h2>
+<body class="flex flex-col min-h-screen bg-[url('/images/parchment-bg.jpg')] bg-cover">
+    <header class="border-b border-amber-800/30 bg-amber-900/80 backdrop-blur-sm">
+        <div class="container flex items-center h-16 px-4">
+            <button class="variant-ghost size-icon text-amber-100 mr-2" onclick="window.location.href='/'">
+                <svg class="h-5 w-5" /* Add the SVG for ArrowLeft here */></svg>
+            </button>
+            <h1 class="text-xl font-serif font-bold text-amber-100">Upload Complete</h1>
+        </div>
+    </header>
+
+    <main class="flex-1 container p-4 space-y-6">
+        <div class="card bg-amber-50/90 border-amber-800/30 backdrop-blur-sm">
+            <div class="card-content p-6">
+                <div class="text-center space-y-4 py-6">
+                    <div class="mx-auto bg-green-100 w-20 h-20 rounded-full flex items-center justify-center border border-green-500">
+                        <svg class="h-10 w-10 text-green-600" /* Add the SVG for Check here */></svg>
+                    </div>
+                    <h2 class="text-2xl font-serif font-semibold text-amber-900">Upload Successful</h2>
+                    <p class="text-amber-800/80 max-w-md mx-auto">
+                        Your document "Business Report.pdf" has been uploaded successfully
+                    </p>
+
+                    <div class="mt-6 space-y-2">
+                        <div class="flex justify-between text-sm text-amber-800">
+                            <span>Processing document</span>
+                            <span>Complete</span>
+                        </div>
+                        <div class="progress" style="height: 2px; background-color: #FFC107;">
+                            <div style="width: 100%; height: 100%; background-color: #FFD700;"></div> <!-- Your Progress Indicator -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
+                    <button onclick="window.location.href='/translate'" class="bg-amber-900 hover:bg-amber-800 text-amber-50 font-serif">
+                        Translate Document
+                    </button>
+                    <button onclick="window.location.href='/video-generate'" class="border-amber-800/30 text-amber-900 font-serif">
+                        Generate Video
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-amber-50/90 border-amber-800/30 backdrop-blur-sm">
+            <div class="card-content p-6">
+                <h3 class="text-lg font-serif font-semibold text-amber-900 mb-4">Document Details</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <svg class="h-10 w-10 text-amber-900 mt-1" /* Add the SVG for FileText here */></svg>
+                        <div>
+                            <h4 class="font-medium text-amber-900">Business Report.pdf</h4>
+                            <p class="text-sm text-amber-800/70">12 pages • 2.4 MB</p>
+                            <p class="text-sm text-amber-800/70 mt-1">Uploaded on March 28, 2025</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-amber-800/20 pt-4">
+                        <h4 class="font-medium text-amber-900 mb-2">Document Preview</h4>
+                        <div class="aspect-[3/4] bg-amber-100 rounded-lg border border-amber-800/30 flex items-center justify-center">
+                            <p class="text-amber-800/70 text-sm">Preview available after processing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
