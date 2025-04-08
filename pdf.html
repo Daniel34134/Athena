@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页商标</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #121212, #000);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url('https://dummyimage.com/1920x1080/000000/111111&text=Tech+Background');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .logo {
+            width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .upload-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            border: 2px solid #00ffff;
+            display: inline-block;
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: transparent;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #00ffff;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #00ffff;
+            color: #000;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background-color: #00ffff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        button:hover {
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 动态动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .upload-container {
+            animation: fadeIn 1s ease;
+        }
+
+        /* Google 翻译小部件样式 */
+        #google_translate_element {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+    <img class="logo" src="https://upload.cc/i1/2025/03/24/Fnxt6s.jpg" alt="Website Logo"
+        onload="this.style.opacity='1'"
+        onerror="this.onerror=null;this.src='图片加载失败提示图链接';alert('图片加载失败，请检查链接或网络');">
+    <div class="upload-container">
+        <label for="pdf-upload" class="custom-file-upload">
+            选择 PDF 文件
+        </label>
+        <input type="file" id="pdf-upload" accept=".pdf">
+        <button onclick="uploadPDF()">上传并处理</button>
+    </div>
+
+    <!-- Google 翻译小部件容器 -->
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'zh-CN' }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        function uploadPDF() {
+            const fileInput = document.getElementById('pdf-upload');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('pdf', file);
+
+                // 这里需要实现与后端的通信
+                // 示例代码，实际需要根据后端接口修改
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                   .then(response => response.json())
+                   .then(data => {
+                        console.log(data);
+                    })
+                   .catch(error => {
+                        console.error('上传失败:', error);
+                    });
+            } else {
+                alert('请选择一个 PDF 文件');
+            }
+        }
+    </script>
+</body>
+
+</html>    
